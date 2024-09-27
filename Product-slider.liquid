@@ -1,0 +1,325 @@
+<link rel="stylesheet" href="https://unpkg.com/swiper/swiper-bundle.min.css" />
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.6.0/css/all.min.css" integrity="sha512-Kc323vGBEqzTmouAECnVceyQqyqdsSiqLQISBL29aUW4U/M7pSPA/gEUZQqv1cwx4OnYxTxve5UMg5GT6L4JJg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+
+
+
+<!-- Product Slider Section with Swiper.js and Dynamic Collection -->
+<div class="product-slider-section">
+  {% if section.settings.heading != blank %}
+    <h2 class="slider-heading">{{ section.settings.heading }}</h2>
+  {% endif %}
+  
+  <div class="swiper-container">
+    <div class="swiper-wrapper">
+      {% if section.settings.collection != blank %}
+        {% for product in collections[section.settings.collection].products %}
+        <div class="swiper-slide product-card">
+          <div class="product-image">
+            <a href="{{ product.url }}">
+              <img src="{{ product.featured_image | img_url: 'medium' }}" alt="{{ product.title }}">
+            </a>
+            {% if product.compare_at_price > product.price %}
+              <span class="sale-badge">SALE</span>
+            {% endif %}
+          </div>
+          <div class="product-details">
+            <h3>{{ product.title }}</h3>
+            <p><span class="price">{{ product.price | money }}</span>
+            {% if product.compare_at_price > product.price %}
+              <span class="compare-price">{{ product.compare_at_price | money }}</span>
+            {% endif %}</p>
+           <a href="javascript:void(0);" class="add-to-cart-btn" data-variant-id="{{ product.variants.first.id }}">ADD TO CART</a>
+
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <p>No collection selected. Please select a collection in the Theme Editor.</p>
+      {% endif %}
+    </div>
+
+    <!-- Add Pagination -->
+    <div class="swiper-pagination"></div>
+    
+    <!-- Add Navigation Arrows with Icons -->
+    <div class="swiper-button-next"><i class="fa fa-chevron-right"></i></div>
+    <div class="swiper-button-prev"><i class="fa fa-chevron-left"></i></div>
+  </div>
+</div>
+
+<!-- Slider Styling -->
+<style>
+  .product-slider-section {
+    position: relative;
+    text-align: center;
+    margin-bottom: 30px;
+    overflow: hidden;
+  }
+
+  .slider-heading {
+    font-size: 2rem;
+    margin-bottom: 20px;
+  }
+
+  .swiper-container {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .product-card {
+    width: 200px;
+    text-align: center;
+    transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+    cursor: pointer;
+  }
+
+  .swiper-slide-active {
+    transform: scale(1.1);
+    box-shadow: 0px 4px 20px rgba(0, 0, 0, 0.3);
+  }
+
+  .product-image img {
+    width: 100%;
+    height: auto;
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .product-card:hover .product-image img {
+    transform: scale(1.1);
+  }
+
+  .sale-badge {
+    position: absolute;
+    background: red;
+    color: white;
+    padding: 5px;
+    top: 10px;
+    right: 10px;
+    font-size: 0.9rem;
+  }
+
+  .product-details {
+    margin-top: 10px;
+  }
+
+  .price {
+    font-weight: bold;
+    color: #000;
+  }
+
+  .compare-price {
+    text-decoration: line-through;
+    color: #888;
+    margin-left: 10px;
+  }
+
+  .add-to-cart-btn {
+    background-color: #00aaff;
+    color: white;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    margin-top: 10px;
+    transition: background-color 0.3s ease-in-out;
+  }
+
+  .add-to-cart-btn:hover {
+    background-color: #008ecc;
+  }
+
+  .swiper-button-next, .swiper-button-prev {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    padding: 10px;
+    cursor: pointer;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 40px;
+    height: 40px;
+  }
+
+  .swiper-button-next {
+    right: 10px;
+  }
+
+  .swiper-button-prev {
+    left: 10px;
+  }
+
+  .swiper-button-next i, .swiper-button-prev i {
+    font-size: 18px;
+  }
+
+  /* Highlight middle card */
+  .swiper-slide-middle {
+    transform: scale(1.15) !important;
+    box-shadow: 0px 6px 25px rgba(0, 0, 0, 0.4) !important;
+    z-index: 10;
+  }
+
+  /* FontAwesome for navigation icons */
+  @import url('https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.3/css/all.min.css');
+</style>
+
+<!-- Swiper.js Initialization Script -->
+<script src="https://unpkg.com/swiper/swiper-bundle.min.js"></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var swiper = new Swiper('.swiper-container', {
+      slidesPerView: {{ section.settings.slides_per_view }},
+      spaceBetween: 20,
+      loop: true,
+      centeredSlides: true, // Center the active slide
+      navigation: {
+        nextEl: '.swiper-button-next',
+        prevEl: '.swiper-button-prev',
+      },
+      pagination: {
+        el: '.swiper-pagination',
+        clickable: true,
+      },
+      breakpoints: {
+        640: {
+          slidesPerView: 1,
+          spaceBetween: 10,
+        },
+        768: {
+          slidesPerView: 2,
+          spaceBetween: 20,
+        },
+        1024: {
+          slidesPerView: 5,
+          spaceBetween: 30,
+        },
+      },
+      on: {
+        slideChange: function () {
+          setTimeout(() => {
+            var activeSlide = document.querySelector('.swiper-slide-active');
+            var slides = document.querySelectorAll('.swiper-slide');
+
+            // Remove the action class from all slides
+            slides.forEach(slide => slide.classList.remove('swiper-slide-middle'));
+
+            // Add the action class to the middle (active) slide
+            if (activeSlide) {
+              activeSlide.classList.add('swiper-slide-middle');
+            }
+          }, 100);
+        }
+      }
+    });
+  });
+
+  
+
+
+document.addEventListener('DOMContentLoaded', function() {
+  // Attach event listeners to all "Add to Cart" buttons
+  document.querySelectorAll('.add-to-cart-btn').forEach(function(button) {
+    button.addEventListener('click', function() {
+      var variantId = this.getAttribute('data-variant-id'); // Get the variant ID from the button's data attribute
+
+      if (variantId) {
+        // Send AJAX request to add product to cart
+        fetch('/cart/add.js', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'X-Requested-With': 'XMLHttpRequest'
+          },
+          body: JSON.stringify({
+            id: variantId,
+            quantity: 1
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          console.log('Product added to cart:', data);
+          // Update the cart count
+          updateCartCount();  // Call this function to refresh the cart count
+          alert('Product added to cart!');
+        })
+        .catch(error => {
+          console.error('Error adding product to cart:', error);
+          alert('There was an error adding the product to the cart.');
+        });
+      }
+    });
+  });
+});
+
+// Function to update the cart count in the navbar
+function updateCartCount() {
+  fetch('/cart.js', {
+    method: 'GET',
+    headers: {
+      'Content-Type': 'application/json',
+      'X-Requested-With': 'XMLHttpRequest'
+    }
+  })
+  .then(response => response.json())
+  .then(cart => {
+    const cartBubble = document.querySelector('.cart-count-bubble span[aria-hidden="true"]');
+    const cartBubbleContainer = document.querySelector('.cart-count-bubble');
+
+    if (cartBubble) {
+      // Update the visible count
+      cartBubble.textContent = cart.item_count;
+
+      // If the cart is empty, hide the bubble, else ensure it's visible
+      if (cart.item_count > 0) {
+        cartBubbleContainer.style.display = 'block'; // Show bubble
+      } else {
+        cartBubbleContainer.style.display = 'none';  // Hide bubble
+      }
+    }
+  })
+  .catch(error => {
+    console.error('Error updating cart count:', error);
+  });
+}
+
+// Call the updateCartCount function when the page loads to set the initial count
+document.addEventListener('DOMContentLoaded', updateCartCount);
+
+  
+</script>
+
+
+{% schema %}
+{
+  "name": "Product Slider",
+  "settings": [
+    {
+      "type": "text",
+      "id": "heading",
+      "label": "Slider Heading",
+      "default": "Our Featured Products"
+    },
+    {
+      "type": "collection",
+      "id": "collection",
+      "label": "Select Product Collection"
+    },
+    {
+      "type": "number",
+      "id": "slides_per_view",
+      "label": "Number of Products per View",
+      "default": 5,
+    }
+  ],
+  "presets": [
+    {
+      "name": "Product Slider",
+      "category": "Custom"
+    }
+  ]
+}
+{% endschema %}
